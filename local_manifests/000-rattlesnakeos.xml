@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="github" fetch="https://github.com/rattlesnakeos/" revision="11.0" />
+
+  <project path="vendor/rattlesnakeos" name="core" remote="github" />
+  <project path="vendor/android-prepare-vendor" name="android-prepare-vendor" remote="github" />
+  <project path="packages/apps/Updater" name="platform_packages_apps_Updater" remote="github" />
+  <project path="external/chromium" name="platform_prebuilts_chromium" remote="github" />
+  <project path="packages/apps/F-Droid" name="platform_prebuilts_fdroid" remote="github" />
+  <project path="packages/apps/F-DroidPrivilegedExtension" name="privileged-extension" remote="github" />
+  <project path="external/seedvault" name="platform_external_seedvault" remote="github" />
+
+</manifest>
