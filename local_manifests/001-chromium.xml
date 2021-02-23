@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <project path="external/chromium" name="platform_prebuilts_chromium" remote="rattlesnakeos" />
+</manifest>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <project path="packages/apps/F-Droid" name="platform_prebuilts_fdroid" remote="rattlesnakeos" clone-depth="1" />
+  <project path="packages/apps/F-DroidPrivilegedExtension" name="privileged-extension" remote="rattlesnakeos" />
+</manifest>
