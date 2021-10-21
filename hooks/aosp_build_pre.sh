@@ -1,10 +1,26 @@
 #!/usr/bin/env bash
 
+patch_android12_build_workarounds() {
+  log_header "${FUNCNAME[0]}"
+
+  # workaround for a number of APK and XML files in current setup that cause build error with strict PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
+  sed -i "s@PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS@#PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS@" "${PRODUCT_MAKEFILE}"
+
+  # workaround for issue with jar files from apv that the build system is not happy with
+  cd "${AOSP_BUILD_DIR}/build/soong"
+  git am --whitespace=nowarn "${CORE_DIR}/patches/build_soong.patch"
+
+  # workaround for crash when clicking on battery manager settings
+  cd "${AOSP_BUILD_DIR}/packages/apps/Settings"
+  git am --whitespace=nowarn "${CORE_DIR}/patches/package_apps_settings.patch"
+}
+
 patch_updater() {
   log_header "${FUNCNAME[0]}"
 
+  # update config to s3 release url
   cd "${AOSP_BUILD_DIR}/packages/apps/Updater/res/values"
-  sed --in-place --expression "s@s3bucket@${RELEASE_URL}/@g" config.xml
+  sed -i --expression "s@s3bucket@${RELEASE_URL}/@g" config.xml
 
   # include selinux changes required to support updater in 11.0
   if ! grep -q "vendor/core/vendor/sepolicy/common/sepolicy.mk" "${AOSP_BUILD_DIR}/build/core/config.mk"; then
@@ -19,13 +35,6 @@ patch_launcher() {
   sed -i "s/QSB_ON_FIRST_SCREEN = true;/QSB_ON_FIRST_SCREEN = false;/" "${AOSP_BUILD_DIR}/packages/apps/Launcher3/src/com/android/launcher3/config/FeatureFlags.java"
 }
 
-patch_disable_apex() {
-  log_header "${FUNCNAME[0]}"
-
-  # currently don't have a need for apex updates (https://source.android.com/devices/tech/ota/apex)
-  sed -i 's@$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)@@' "${AOSP_BUILD_DIR}/build/make/target/product/mainline_system.mk"
-}
-
 patch_device_config() {
   log_header "${FUNCNAME[0]}"
 
@@ -33,7 +42,7 @@ patch_device_config() {
   sed -i "s@PRODUCT_MODEL := AOSP on ${DEVICE}@PRODUCT_MODEL := ${DEVICE_FRIENDLY}@" "${PRODUCT_MAKEFILE}" || true
 }
 
+patch_android12_build_workarounds
 patch_updater
 patch_launcher
-patch_disable_apex
 patch_device_config

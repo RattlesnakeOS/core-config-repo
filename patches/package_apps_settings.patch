@@ -1,0 +1,82 @@
+From 07ab657402985c526ff843c3bef7e600173f5698 Mon Sep 17 00:00:00 2001
+From: Danny Lin <danny@kdrag0n.dev>
+Date: Tue, 26 Oct 2021 08:22:12 -0700
+Subject: [PATCH] Fix crash when opening smart battery preferences
+
+This fixes the following crash when opening Battery Manager settings:
+
+FATAL EXCEPTION: main
+Process: com.android.settings, PID: 2444
+java.lang.RuntimeException: Unable to start activity ComponentInfo{com.android.settings/com.android.settings.SubSettings}: android.view.InflateException: Binary XML file line #25: Error inflating class (not found)com.android.settingslib.widget.IllustrationPreferencee
+       at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:3640)
+       at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:3797)
+       at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:103)
+       at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:135)
+       at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:95)
+       at android.app.ActivityThread.handleMessage(ActivityThread.java:2215)
+       at android.os.Handler.dispatchMessage(Handler.java:106)
+       at android.os.Looper.loopOnce(Looper.java:201)
+       at android.os.Looper.loop(Looper.java:288)
+       at android.app.ActivityThread.main(ActivityThread.java:7844)
+       at java.lang.reflect.Method.invoke(Native Method)
+       at com.android.internal.os.RuntimeInit.run(RuntimeInit.java:548)
+       at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1003)
+Caused by: android.view.InflateException: Binary XML file line #25: Error inflating class (not found)com.android.settingslib.widget.IllustrationPreferencee
+       at androidx.preference.PreferenceInflater.createItemFromTag(PreferenceInflater.java:287)
+       at androidx.preference.PreferenceInflater.rInflate(PreferenceInflater.java:344)
+       at androidx.preference.PreferenceInflater.inflate(PreferenceInflater.java:157)
+       at androidx.preference.PreferenceInflater.inflate(PreferenceInflater.java:109)
+       at androidx.preference.PreferenceManager.inflateFromResource(PreferenceManager.java:216)
+       at androidx.preference.PreferenceFragmentCompat.addPreferencesFromResource(PreferenceFragmentCompat.java:362)
+       at com.android.settings.core.InstrumentedPreferenceFragment.addPreferencesFromResource(InstrumentedPreferenceFragment.java:100)
+       at com.android.settings.SettingsPreferenceFragment.addPreferencesFromResource(SettingsPreferenceFragment.java:146)
+       at com.android.settings.dashboard.DashboardFragment.displayResourceTiles(DashboardFragment.java:327)
+       at com.android.settings.dashboard.DashboardFragment.refreshAllPreferences(DashboardFragment.java:431)
+       at com.android.settings.dashboard.DashboardFragment.onCreatePreferences(DashboardFragment.java:182)
+       at androidx.preference.PreferenceFragmentCompat.onCreate(PreferenceFragmentCompat.java:161)
+       at com.android.settingslib.core.lifecycle.ObservablePreferenceFragment.onCreate(ObservablePreferenceFragment.java:61)
+       at com.android.settings.SettingsPreferenceFragment.onCreate(SettingsPreferenceFragment.java:127)
+       at com.android.settings.dashboard.DashboardFragment.onCreate(DashboardFragment.java:150)
+       at androidx.fragment.app.Fragment.performCreate(Fragment.java:2939)
+       at androidx.fragment.app.FragmentStateManager.create(FragmentStateManager.java:451)
+       at androidx.fragment.app.FragmentStateManager.moveToExpectedState(FragmentStateManager.java:254)
+       at androidx.fragment.app.FragmentManager.executeOpsTogether(FragmentManager.java:2209)
+       at androidx.fragment.app.FragmentManager.removeRedundantOperationsAndExecute(FragmentManager.java:2120)
+       at androidx.fragment.app.FragmentManager.execPendingActions(FragmentManager.java:2022)
+       at androidx.fragment.app.FragmentManager.executePendingTransactions(FragmentManager.java:603)
+       at com.android.settings.SettingsActivity.switchToFragment(SettingsActivity.java:596)
+       at com.android.settings.SettingsActivity.launchSettingFragment(SettingsActivity.java:381)
+       at com.android.settings.SettingsActivity.onCreate(SettingsActivity.java:282)
+       at android.app.Activity.performCreate(Activity.java:8051)
+       at android.app.Activity.performCreate(Activity.java:8031)
+       at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1336)
+       at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:3613)
+       ... 12 more
+Caused by: java.lang.ClassNotFoundException: com.android.settingslib.widget.IllustrationPreferencee
+       at java.lang.Class.classForName(Native Method)
+       at java.lang.Class.forName(Class.java:454)
+       at androidx.preference.PreferenceInflater.createItem(PreferenceInflater.java:214)
+       at androidx.preference.PreferenceInflater.createItemFromTag(PreferenceInflater.java:277)
+       ... 40 more
+Caused by: java.lang.ClassNotFoundException: com.android.settingslib.widget.IllustrationPreferencee
+       ... 44 more
+---
+ res/xml/smart_battery_detail.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/res/xml/smart_battery_detail.xml b/res/xml/smart_battery_detail.xml
+index 9c0aac5831..9795125252 100644
+--- a/res/xml/smart_battery_detail.xml
++++ b/res/xml/smart_battery_detail.xml
+@@ -22,7 +22,7 @@
+     android:title="@string/smart_battery_manager_title"
+     settings:keywords="@string/keywords_battery_adaptive_preferences">
+ 
+-    <com.android.settingslib.widget.IllustrationPreferencee
++    <com.android.settingslib.widget.IllustrationPreference
+         android:key="auto_awesome_battery"
+         settings:lottie_rawRes="@raw/auto_awesome_battery_lottie" />
+ 
+-- 
+2.30.1 (Apple Git-130)
+
