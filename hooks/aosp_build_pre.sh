@@ -13,6 +13,9 @@ patch_android12_build_workarounds() {
   # workaround for crash when clicking on battery manager settings
   cd "${AOSP_BUILD_DIR}/packages/apps/Settings"
   git am --whitespace=nowarn "${CORE_DIR}/patches/package_apps_settings.patch"
+
+  # workaround for build issue with unused turbo_adapter.te
+  rm -rf "${AOSP_BUILD_DIR}/hardware/google/pixel-sepolicy/googlebattery/turbo_adapter.te"
 }
 
 patch_updater() {
